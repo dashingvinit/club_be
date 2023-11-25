@@ -1,0 +1,21 @@
+{
+  "name": "club_back",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "raushan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "http": "^0.0.1-security",
+    "mongoose": "^8.0.1",
+    "socket.io": "^4.7.2",
+    "twilio": "^4.19.0"
+  }
+}
