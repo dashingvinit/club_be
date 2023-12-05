@@ -138,7 +138,7 @@ router.post('/login', async (req, res) => {
 
 
   // Create a route to add a DJ to the club
-router.post('/adddj', async (req, res) => {
+router.post('/adddjbyclub', async (req, res) => {
     try {
       // Extract data from the request body
       const { DjName, ClubID, DjNumber, Djpassword, clubEmail } = req.body;
@@ -164,5 +164,53 @@ router.post('/adddj', async (req, res) => {
     }
   });
 
+  // Define a route to fetch all data by ClubID
+  router.get('/djData/:clubId', async (req, res) => {
+  const clubId = req.params.clubId;
+
+  try {
+    // Find all DJs with the specified ClubID0
+    const DJs = await DJModal.find({ ClubID: clubId });
+
+    // Check if any DJs were found
+    if (DJs.length === 0) {
+      return res.json({ message: 'No DJs found for the provided ClubID',success:false });
+    }
+
+    // Return the found DJs
+    res.json({alldj:DJs , success:true});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// DELETE route to delete a DJ by ID
+router.delete('deleteDj/:clubId/:id', async (req, res) => {
+  try {
+    const djId = req.params.id;
+    const clubId = req.params.clubId;
+    // Check if the DJ with the given ID exists
+    const existingDJ = await DJModal.findById(djId);
+    if (!existingDJ) {
+      return res.json({ error: 'DJ not found' ,success:false});
+    }
+       
+    if(clubId == existingDJ.ClubID){
+         // If the DJ exists, delete it
+          await DJModal.findByIdAndDelete(djId);
+
+         res.json({ message: 'DJ deleted successfully',success:true });
+       }
+       else{
+        res.json({ message: 'You are not the Club Admin',success:false });
+
+       }
+   
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error',success:false });
+  }
+});
 
 module.exports = router;

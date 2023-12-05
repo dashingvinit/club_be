@@ -20,15 +20,17 @@ const DJSchema = new mongoose.Schema({
  DJEmail:{
     type: String,
   },
-  
-  
+  statusLive:{
+    type:Boolean,
+    default : false
+  },
+  portalCloseTime:{
+   type : String
+  },
   date: {
     type: Date,
     default: Date.now,
   },
-  
-  
-
 });
 
 

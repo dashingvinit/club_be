@@ -45,7 +45,6 @@ const clubSchema = new mongoose.Schema({
   clubId:{
     type: Number,
     // unique: true,
-
   },
   djId: {
     type: [String],

@@ -6,7 +6,9 @@ const http = require('http');
 const PORT = process.env.PORT || 5000;
 require('./db/db'); 
 const clubRouter = require('./Router/Club/club'); // Assuming these are Express routers
-const adminRouter = require('./Router/Admin/Admin')
+const adminRouter = require('./Router/Admin/Admin');
+const djRouter = require('./Router/DJ/DJ');
+const djPortal = require('./Router/DJ/DJPortal') 
 let app = express();
 app.use(express.json());
 app.use(cors());
@@ -20,7 +22,8 @@ app.use(
 app.use('/club', clubRouter);
 app.use('/admin', adminRouter);
 app.use('/otpservices', adminRouter);
-
+app.use('/dj',djRouter);
+app.use('/djportal',djPortal);
 
 const server = http.createServer(app);
 
