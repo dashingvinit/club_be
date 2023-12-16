@@ -16,6 +16,6 @@
     "http": "^0.0.1-security",
     "mongoose": "^8.0.1",
     "socket.io": "^4.7.2",
-    "twilio": "^4.19.0"
+    "twilio": "^4.19.3"
   }
 }

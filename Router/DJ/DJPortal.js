@@ -64,9 +64,7 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 
   try {
     // Find the DJPortalModal using the provided DJId
-    const djPortal = await DJPortalModal.findOne({ DJId: djId })
-    .sort({ createdAt: -1 })
-    .exec();
+    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });;
     
     if (!djPortal) {
       return res.status(404).json({ error: 'DJ Portal not found' });
@@ -93,9 +91,7 @@ router.post('/saveSelectedSongs/:djId', async (req, res) => {
 
   try {
     // Find the DJPortalModal using the provided DJId
-    const djPortal = await DJPortalModal.findOne({ DJId: djId })
-    .sort({ createdAt: -1 })
-    .exec();
+    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
     
     if (!djPortal) {
       return res.status(404).json({ error: 'DJ Portal not found' });
@@ -120,9 +116,7 @@ router.get('/latestSongReqList/:djId', async (req, res) => {
     const { djId } = req.params;
 
     // Find the DJPortalModal document with the specified DJId and sort by date in descending order to get the latest entry
-    const latestDJPortal =await DJPortalModal.findOne({ DJId: djId })
-    .sort({ createdAt: -1 })
-    .exec();
+    const latestDJPortal =await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
 
     if (!latestDJPortal) {
       return res.status(404).json({ message: 'No DJ Portal found for the specified DJId' });
@@ -130,8 +124,8 @@ router.get('/latestSongReqList/:djId', async (req, res) => {
 
     // Extract the latest SongReqList
     const latestSongReqList = latestDJPortal.SongReqList;
-
-    res.json({ latestSongReqList });
+     const date = latestDJPortal.date;
+    res.json({ songs :latestSongReqList, timer : date });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

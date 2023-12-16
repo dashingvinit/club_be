@@ -9,6 +9,7 @@ const clubRouter = require('./Router/Club/club'); // Assuming these are Express 
 const adminRouter = require('./Router/Admin/Admin');
 const djRouter = require('./Router/DJ/DJ');
 const djPortal = require('./Router/DJ/DJPortal') 
+const otpRouter = require('./Router/Otp/Otp')
 let app = express();
 app.use(express.json());
 app.use(cors());
@@ -24,6 +25,7 @@ app.use('/admin', adminRouter);
 app.use('/otpservices', adminRouter);
 app.use('/dj',djRouter);
 app.use('/djportal',djPortal);
+app.use('/otp',otpRouter);
 
 const server = http.createServer(app);
 
