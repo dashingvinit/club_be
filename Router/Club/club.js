@@ -213,4 +213,30 @@ router.delete('deleteDj/:clubId/:id', async (req, res) => {
   }
 });
 
+//get all dj names 
+router.get('/api/getallclubs', async (req, res) => {
+  try {
+    // Fetch all DJs from the database
+    const allClubs = await ClubModal.find({}, 'clubId _id clubName');
+
+    // If there are no DJs, return an empty array
+    if (!allClubs || allClubs.length === 0) {
+      return res.status(404).json({ message: 'No Clubs found.' });
+    }
+
+    // Map the result to include only clubId, id, and djName
+    const mappedDJs = allClubs.map((club) => ({
+      clubId: club.clubId,
+      id: club._id,
+      clubName: club.clubName,
+    }));
+
+    res.status(200).json(mappedDJs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 module.exports = router;

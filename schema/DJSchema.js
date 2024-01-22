@@ -10,7 +10,7 @@ const DJSchema = new mongoose.Schema({
     required: true,
   },
   DjNumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   Djpassword: {
