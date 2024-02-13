@@ -1,6 +1,40 @@
 const express = require('express');
 const DJModal = require('../../schema/DJSchema');
 const router = express.Router();
+const schedule = require('node-schedule')
+// Route to get all DJ entries
+router.get('/djs', async (req, res) => {
+  try {
+    const allDJs = await DJModal.find();
+    res.json(allDJs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// DELETE DJ by DjNumber
+router.delete('/deletedj/:djNumber', async (req, res) => {
+  const djNumber = req.params.djNumber;
+
+  try {
+    // Find the DJ by DjNumber
+    const djToDelete = await DJModal.findOne({ DjNumber: djNumber });
+
+    if (!djToDelete) {
+      return res.status(404).json({ message: 'DJ not found' });
+    }
+
+    // Delete the DJ
+    await djToDelete.deleteOne(); // or djToDelete.remove();
+
+    return res.json({ message: 'DJ deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 
 // Route for DJ login
 router.post('/login', async (req, res) => {
@@ -82,5 +116,17 @@ router.put('/updateStatus/:id', async (req, res) => {
   }
 });
 
+router.get('/checkDJModalStatus/:clubId', async (req, res) => {
+  try {
+    const clubId = req.params.clubId;
 
+    // Check if any DJModal is open for the specified ClubID
+    const isOpen = await DJModal.exists({ ClubID: clubId, statusLive: true });
+
+    res.json({ isOpen });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 module.exports = router;

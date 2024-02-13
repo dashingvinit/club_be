@@ -38,7 +38,6 @@ SongReqList:[{
   AcceptedSongs: [{
     songname: {
       type: String,
-      required: true,
   
     },
     announcement:{
@@ -63,14 +62,17 @@ SongReqList:[{
       required: true
   
     },
-  
+
   }],
 
   DJPortalStartTimeing: {
     type: String,
     required: true,
   },
-
+  transactionId: {
+    type: String,
+  },
+ 
   TotalSongs :{
     type: Number,
     required: true,
@@ -89,6 +91,15 @@ SongReqList:[{
   },
 
 });
+
+DJPortalSchema.methods.updateBookingPrice = function () {
+  const portalPrice = this.price;
+  this.SongReqList.forEach(song => {
+      if (song.bookingPrice < portalPrice) {
+          song.bookingPrice = portalPrice;
+      }
+  });
+};
 
 const DJPortalModal = mongoose.model('DJPortalModal', DJPortalSchema);
 module.exports = DJPortalModal;
