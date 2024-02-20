@@ -4,57 +4,103 @@ const express = require('express');
 const paymentWaitingModal = require('../../schema/PaymentWaitingSchema');
 const  axios = require('axios');
 const router = express.Router();
+ 
+const twilio = require('twilio');
 
-// API to create a payment waiting entry
+const accountSid = 'AC1744ecd4fb2549b1f5940a564fecc97c';
+const authToken = '93fcbb561504455adde23fc346507fd6';
+const twilioClient = twilio(accountSid, authToken);
+
+
 router.post('/create-payment-waiting', async (req, res) => {
-    try {
-      const { SongReqList, djID,paymentWaitingStartTimeing, paymentWaitingEndTiming} = req.body;
+  try {
+    const { SongReqList, djID, paymentWaitingStartTimeing, paymentWaitingEndTiming } = req.body;
 
-      const processedData = await Promise.all(SongReqList.map(async (songReq) => {
-        const { songname, songlink, optionalurl, announcement, bookingPrice, userMobile } = songReq;
-  
-        const MUID = "MUID" + userMobile;
-        const TUID = djID+"TUID" + userMobile;
-        
-        const additionalData = await axios.post('http://localhost:5000/pay/payment', {
-          MUID: MUID,
-          transactionId: TUID,
-          name: "User" + userMobile,
-          amount: bookingPrice,
-          mobileNumber: userMobile,
-        });
-  
-        const redirectURI = additionalData.data.redirectTo;
-  
-        const finalData = {
-          songname,
-          songlink,
-          optionalurl,
-          announcement,
-          bookingPrice,
-          userMobile,
-          MUID: MUID,
-          transactionId: TUID,
-          djId: djID,
-          paymentWaitingLink: redirectURI,
-        };
-  
-        return finalData;
-      }));
-  
-      const savedData = await paymentWaitingModal.create({ 
-        SongReqList: processedData,
-        paymentWaitingStartTimeing,
-        paymentWaitingEndTiming,
-        djId: djID,
+    // Send immediate response with success true
+    res.status(200).json({ success: true, message: 'Payment waiting entry creation initiated.' });
+
+    // Perform processing asynchronously
+    await processPaymentWaitingEntry(SongReqList, djID, paymentWaitingStartTimeing, paymentWaitingEndTiming);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+async function processPaymentWaitingEntry(SongReqList, djID, paymentWaitingStartTimeing, paymentWaitingEndTiming) {
+  try {
+    const processedData = await Promise.all(SongReqList.map(async (songReq) => {
+      const { songname, songlink, optionalurl, announcement, bookingPrice, userMobile } = songReq;
+
+      const MUID = "MUID" + userMobile;
+      const TUID = djID + "TUID" + userMobile;
+
+      const additionalDataPromise = axios.post('http://localhost:5000/pay/payment', {
+        MUID: MUID,
+        transactionId: TUID,
+        name: "User" + userMobile,
+        amount: bookingPrice,
+        mobileNumber: userMobile,
       });
-  
-      res.status(201).json(savedData);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+
+      const redirectURIPromise = additionalDataPromise.then(response => response.data.redirectTo);
+
+      const additionalData = await additionalDataPromise;
+      const redirectURI = await redirectURIPromise;
+
+      if (!userMobile) {
+        console.log('no mobile found');
+        // return res.status(400).json({ error: 'Missing "to" field in the request body' });
+      }
+      else {
+    
+      try {
+    
+            const message = `Welcome to Club Nights. Kindly Pay your amount to play a song. This is the payment link ${redirectURI}`;
+    
+        // Send msg
+        await twilioClient.messages.create({
+          body: message,
+          messagingServiceSid: 'MG734f651e157e3ceb348bb20415586d85',
+          to:"+91"+ userMobile
+        });
+    
+        console.log({ message: 'pay link sent successfully', success: true });
+      } catch (error) {
+        console.error(`Error sending pay link to ${to}: ${error}`);
+        // res.json({ error: 'Failed to send link', success: false });
+      }   
+      }
+
+      const finalData = {
+        songname,
+        songlink,
+        optionalurl,
+        announcement,
+        bookingPrice,
+        userMobile,
+        MUID: MUID,
+        transactionId: TUID,
+        djId: djID,
+        paymentWaitingLink: redirectURI,
+      };
+       
+      return finalData;
+    }));
+
+    
+    await paymentWaitingModal.create({
+      SongReqList: processedData,
+      paymentWaitingStartTimeing,
+      paymentWaitingEndTiming,
+      djId: djID,
+    });
+  } catch (error) {
+        console.error("Error processing payment waiting entry:", error);
+     // Handle error here, you might want to log it or handle it differently
+  }
+}
   
   router.post('/saveLatestToAccepted', async (req, res) => {
     try {
@@ -137,15 +183,39 @@ router.get('/payment-waiting/:djId/:userMobile', async (req, res) => {
     const { userMobile } = req.params;
   
     try {
-      // Find documents in the paymentWaitingModal collection with the provided userMobile
-      const songLists = await paymentWaitingModal.find({ 'SongReqList.userMobile': userMobile });
-  
-      res.json(songLists);
+        // Aggregation pipeline to filter and project only the matched songs
+        const matchedSongs = await paymentWaitingModal.aggregate([
+            // Match documents where any song in SongReqList has the provided userMobile
+            {
+                $match: {
+                    'SongReqList.userMobile': userMobile
+                }
+            },
+            // Unwind SongReqList array to flatten the structure
+            { $unwind: '$SongReqList' },
+            // Match the specific song with the provided userMobile
+            {
+                $match: {
+                    'SongReqList.userMobile': userMobile
+                }
+            },
+            // Project to include only the matched song
+            {
+                $project: {
+                    _id: 0, // Exclude _id field
+                    SongReqList: 1 // Include only the SongReqList
+                }
+            }
+        ]);
+
+       return res.send({matchedSongs});
     } catch (error) {
-      console.error("Error:", error);
-      res.status(500).json({ error: 'Internal Server Error' });
+        console.error("Error:", error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
-  });
+});
+
+
   
   router.get('/payfind/:txind', async (req, res) => {
     const { txind } = req.params;

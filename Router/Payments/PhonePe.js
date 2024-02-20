@@ -50,11 +50,11 @@ const merchant_id = process.env.MERCHANT_ID;
         };
 
         axios.request(options).then(function (response) {
-            console.log(response.data)
-            console.log(response.data.data.instrumentResponse.redirectInfo.url);
+            // console.log(response.data)
+            // console.log(response.data.data.instrumentResponse.redirectInfo.url);
             res.json({ redirectTo: response.data.data.instrumentResponse.redirectInfo.url });
 
-            res.redirect(response.data.data.instrumentResponse.redirectInfo.url)
+            // res.redirect(response.data.data.instrumentResponse.redirectInfo.url)
         })
         .catch(function (error) {
             console.error(error);
@@ -194,23 +194,26 @@ const checkStatus = async (req, res) => {
         if (response.data.success === true) {
             // Check if payment already processed
             const existingPayment = await paymentWaitingModal.findOne({
-                'SongReqList.transactionId': merchantTransactionId,
-                'SongReqList.paymentWaitingstatus': false
+                'SongReqList.transactionId': merchantTransactionId
             }).sort({date : -1});
+            const filterExist = existingPayment.SongReqList.filter((item) => item.transactionId === merchantTransactionId);
             
-            if (!existingPayment) {
+            if (filterExist[0].paymentWaitingstatus === true) {
+                // console.log(filterExist);
                 console.log("Exist pay");
                 return res.redirect('http://localhost:3000/recent-transactions');
             }
-
          // Update payment status and sort by date descending
-const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
-    {'SongReqList.transactionId': merchantTransactionId },
-    { $set: { 'SongReqList.$.paymentWaitingstatus': true } },
-    { new: true }
-).sort({date: -1});
+       const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
+      {'SongReqList.transactionId': merchantTransactionId },
+      { $set: { 'SongReqList.$.paymentWaitingstatus': true } },
+      { new: true }
+       ).sort({date: -1});
+       const getDetails = await paymentWaitingModal.findOne({ 'SongReqList.transactionId': merchantTransactionId }).sort({date:-1});
+       const filteredSongReqList = getDetails.SongReqList.filter(item => item.transactionId === merchantTransactionId);
 
-
+    //    console.log(filteredSongReqList);
+          console.log(filteredSongReqList[0].djId);
             if (!updatedPayment) {
                 console.log("not found pay");
 
@@ -218,35 +221,38 @@ const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
             }
 
             // Find the last DJ
-            const lastDJ = await DJPortalModal.findOne({ DJId: updatedPayment.djId }).sort({ date: -1 });
+            const lastDJ = await DJPortalModal.findOne({ DJId: filteredSongReqList[0].djId }).sort({ date: -1 });
 
             if (!lastDJ) {
                 return res.status(404).json({ error: 'DJ not found' });
             }
 
                 // Check if the same song link with the same mobile number already exists
-         const existingSong = lastDJ.AcceptedSongs.find(song => song.songlink === updatedPayment.SongReqList[0].songlink && song.userMobile === updatedPayment.SongReqList[0].userMobile);
-
+        const existingSong = lastDJ.AcceptedSongs.find(song => 
+            song.songlink === filteredSongReqList[0].songlink && 
+            song.userMobile === filteredSongReqList[0].userMobile 
+        );
+        
          if (existingSong) {
            // If the same song link with the same mobile number already exists, do not save to the database
            console.log(existingSong,"ext");
-           return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+           return res.redirect(`http://localhost:3000/confirmed-list/${filteredSongReqList[0].djId}`);
         }
  
                  // Push accepted song to AcceptedSongs array
                 lastDJ.AcceptedSongs.push({
-                songname: updatedPayment.SongReqList[0].songname,
-                announcement: updatedPayment.SongReqList[0].announcement,
-                songlink: updatedPayment.SongReqList[0].songlink,
-                optionalurl: updatedPayment.SongReqList[0].optionalurl,
-                bookingPrice: updatedPayment.SongReqList[0].bookingPrice,
-                userMobile: updatedPayment.SongReqList[0].userMobile,
+                songname: filteredSongReqList[0].songname,
+                announcement: filteredSongReqList[0].announcement,
+                songlink: filteredSongReqList[0].songlink,
+                optionalurl: filteredSongReqList[0].optionalurl,
+                bookingPrice: filteredSongReqList[0].bookingPrice,
+                userMobile: filteredSongReqList[0].userMobile,
                });
             // Save the updated DJ document
             await lastDJ.save();
 
             // Find the user by mobile number
-            const user = await userModal.findOne({ userMobile: updatedPayment.SongReqList[0].userMobile });
+            const user = await userModal.findOne({ userMobile: filteredSongReqList[0].userMobile });
 
             if (!user) {
                 console.log("no user ");
@@ -255,14 +261,14 @@ const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
             }
 
             // Add the amount to totalPayments
-            user.totalPayments += updatedPayment.SongReqList[0].bookingPrice;
+            user.totalPayments += filteredSongReqList[0].bookingPrice;
 
             // Save the updated user
             await user.save();
             console.log("done pay");
 
 
-            return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+            return res.redirect(`http://localhost:3000/confirmed-list/${filteredSongReqList[0].djId}`);
         } else {
             return res.redirect(`http://localhost:3000/failed`);
         }
@@ -273,14 +279,114 @@ const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
 };
 
 
+// const checkStatus = async (req, res) => {
+//     try {
+//         const merchantTransactionId = req.params['txnId'];
+//         const merchantId = "PGTESTPAYUAT";
+//         const keyIndex = 1;
+//         const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399";
+//         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+//         const checksum = sha256 + "###" + keyIndex;
 
+//         const options = {
+//             method: 'GET',
+//             url: `https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/status/${merchantId}/${merchantTransactionId}`,
+//             headers: {
+//                 accept: 'application/json',
+//                 'Content-Type': 'application/json',
+//                 'X-VERIFY': checksum,
+//                 'X-MERCHANT-ID': `${merchantId}`
+//             }
+//         };
 
+//         // Check payment status
+//         const response = await axios.request(options);
 
+//         if (response.data.success === true) {
+//             // Check if payment already processed
+//             const existingPayment = await paymentWaitingModal.findOne({
+//                 'SongReqList.transactionId': merchantTransactionId,
+//                 'SongReqList.paymentWaitingstatus': true
+//             }).sort({date : -1});
+            
+//             if (existingPayment) {
+//                 console.log("Exist pay");
+//                 return res.redirect('http://localhost:3000/recent-transactions');
+//             }
 
+//             // Update payment status and sort by date descending
+//             const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
+//                 {'SongReqList.transactionId': merchantTransactionId },
+//                 { $set: { 'SongReqList.$.paymentWaitingstatus': true } },
+//                 { new: true }
+//             ).sort({date: -1});
 
+//             console.log(updatedPayment);
+//             if (!updatedPayment) {
+//                 console.log("not found pay");
+//                 return res.status(404).json({ message: 'Payment not found', success: false });
+//             }
 
+//             // Find the last DJ
+//             const lastDJ = await DJPortalModal.findOne({ DJId: updatedPayment.djId }).sort({ date: -1 });
 
+//             if (!lastDJ) {
+//                 return res.status(404).json({ error: 'DJ not found' });
+//             }
 
+//             // Iterate through each song in the updated payment
+//             for (const song of updatedPayment.SongReqList) {
+//                 // Check if the same song link with the same mobile number already exists
+//                 const existingSong = lastDJ.AcceptedSongs.find(existingSong =>
+//                     existingSong.songlink === song.songlink &&
+//                     existingSong.userMobile === song.userMobile &&
+//                     existingSong.transactionId === song.transactionId
+//                 );
+
+//                 if (existingSong) {
+//                     // If the same song link with the same mobile number already exists, redirect
+//                     console.log(existingSong, "ext");
+//                     return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+//                 } else {
+//                     // Push accepted song to AcceptedSongs array
+//                     lastDJ.AcceptedSongs.push({
+//                         songname: song.songname,
+//                         announcement: song.announcement,
+//                         songlink: song.songlink,
+//                         optionalurl: song.optionalurl,
+//                         bookingPrice: song.bookingPrice,
+//                         userMobile: song.userMobile,
+//                     });
+//                 }
+//             }
+
+//             // Save the updated DJ document
+//             await lastDJ.save();
+
+//             // Find the user by mobile number
+//             const user = await userModal.findOne({ userMobile: updatedPayment.SongReqList[0].userMobile });
+
+//             if (!user) {
+//                 console.log("no user ");
+//                 return res.redirect('http://localhost:3000/recent-transactions');
+//             }
+
+//             // Add the amount to totalPayments
+//             user.totalPayments += updatedPayment.SongReqList[0].bookingPrice;
+
+//             // Save the updated user
+//             await user.save();
+//             console.log("done pay");
+
+//             return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+//         } else {
+//             return res.redirect(`http://localhost:3000/failed`);
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({ error: error.message, success: false });
+//     }
+// };
 
 
 module.exports = {

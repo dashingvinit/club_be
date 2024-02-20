@@ -2,10 +2,10 @@
 const express = require('express');
 const router = express.Router();
 
-const twilio = require('twilio');
 const userModal = require('../../schema/UserSchema');
 const  otpModal = require('../../schema/OTPSchema')
 //send otp by mobile 
+const twilio = require('twilio');
 
 const accountSid = 'AC1744ecd4fb2549b1f5940a564fecc97c';
 const authToken = '93fcbb561504455adde23fc346507fd6';

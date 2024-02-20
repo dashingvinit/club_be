@@ -14,7 +14,7 @@ const paymentRouter = require('./Router/Payments/PaymentRouter')
 const userRouter = require('./Router/User/User')
 const waitPayRouter = require('./Router/Payments/PaymentWaiting')
 const clubPay = require('./Router/Payments/ClubPay')
-
+const feedRouter = require('./Router/Admin/Feed')
 let app = express();
 app.use(express.json());
 app.use(cors());
@@ -46,6 +46,7 @@ app.use('/waitpay',waitPayRouter);
 
 //our db payment routers 
 app.use('/clubpay',clubPay);
+app.use('/feed',feedRouter);
 
 
 const server = http.createServer(app);
