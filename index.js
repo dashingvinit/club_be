@@ -49,33 +49,35 @@ app.use('/clubpay',clubPay);
 app.use('/feed',feedRouter);
 
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
-// Initialize socket.io
-const io = new Server({
-  cors: {
-    origin: "http://localhost:5000"
-  }
-});
+// // Initialize socket.io
+// const io = new Server({
+//   cors: {
+//     origin: "http://localhost:5000"
+//   }
+// });
 
 // WebSocket server event handling
-io.on('connection', (socket) => {
-  console.log('WebSocket client connected');
+// io.on('connection', (socket) => {
+//   console.log('WebSocket client connected');
 
-  // Handle WebSocket messages from clients
-  socket.on('message', (message) => {
-    console.log(`Received WebSocket message: ${message}`);
+//   // Handle WebSocket messages from clients
+//   socket.on('message', (message) => {
+//     console.log(`Received WebSocket message: ${message}`);
 
-    // Broadcast the message to all connected clients
-    io.emit('message', message);
-  });
+//     // Broadcast the message to all connected clients
+//     io.emit('message', message);
+//   });
 
-  // Handle WebSocket disconnect event
-  socket.on('disconnect', () => {
-    console.log('WebSocket client disconnected');
-  });
-});
-
+//   // Handle WebSocket disconnect event
+//   socket.on('disconnect', () => {
+//     console.log('WebSocket client disconnected');
+//   });
+// });
+app.get('/',(req,res)=>{
+  res.send('Hello to ClubNights_DEVS')
+})
 app.listen(PORT, () => {
   console.log(`App listening at ${PORT}`);
 });
