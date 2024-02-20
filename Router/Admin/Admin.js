@@ -2,7 +2,6 @@ const express = require('express');
 const AdminModal = require('../../schema/AdminSchema');
 const clubModal = require('../../schema/ClubOwnerSchema');
 const router = express.Router();
-const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 // Endpoint to handle the creation of a new admin
 router.post('/admins', async (req, res) => {
