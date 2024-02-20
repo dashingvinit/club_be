@@ -20,7 +20,7 @@ const merchant_id = process.env.MERCHANT_ID;
             merchantUserId: req.body.MUID,
             name: req.body.name,
             amount: req.body.amount * 100,
-            redirectUrl: `http://localhost:5000/pay/status/${merchantTransactionId}`,
+            redirectUrl: `https://club-be.vercel.app/pay/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             mobileNumber: req.body.number,
             paymentInstrument: {
@@ -94,7 +94,7 @@ const merchant_id = process.env.MERCHANT_ID;
 //         const existingPayment = await paymentModal.findOne({ transactionId: merchantTransactionId, paymentstatus: true });
     
 //         if (existingPayment) {
-//             return res.redirect('http://localhost:3000/recent-transactions');
+//             return res.redirect('https://clubnights.fun/recent-transactions');
 
 //             // Payment has already been processed, no need to repeat the process
 //             // return res.status(200).json({ message: 'Payment already processed', success: true });
@@ -138,7 +138,7 @@ const merchant_id = process.env.MERCHANT_ID;
 
 //     if (!user) {
 //     //   return res.status(404).json({ error: 'User not found' });
-//       return res.redirect('http://localhost:3000/recent-transactions');
+//       return res.redirect('https://clubnights.fun/recent-transactions');
 
 //     }
 
@@ -148,7 +148,7 @@ const merchant_id = process.env.MERCHANT_ID;
 //     // Save the updated user
 //     await user.save();
 //     //   return res.status(200).json({ message: 'Payment Success & Song Accepted' });
-//       return res.redirect('http://localhost:3000/recent-transactions');
+//       return res.redirect('https://clubnights.fun/recent-transactions');
 
 //       } catch (error) {
 //         res.status(500).json({ error: error.message, success: false });
@@ -201,7 +201,7 @@ const checkStatus = async (req, res) => {
             if (filterExist[0].paymentWaitingstatus === true) {
                 // console.log(filterExist);
                 console.log("Exist pay");
-                return res.redirect('http://localhost:3000/recent-transactions');
+                return res.redirect('https://clubnights.fun/recent-transactions');
             }
          // Update payment status and sort by date descending
        const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
@@ -236,7 +236,7 @@ const checkStatus = async (req, res) => {
          if (existingSong) {
            // If the same song link with the same mobile number already exists, do not save to the database
            console.log(existingSong,"ext");
-           return res.redirect(`http://localhost:3000/confirmed-list/${filteredSongReqList[0].djId}`);
+           return res.redirect(`https://clubnights.fun/confirmed-list/${filteredSongReqList[0].djId}`);
         }
  
                  // Push accepted song to AcceptedSongs array
@@ -257,7 +257,7 @@ const checkStatus = async (req, res) => {
             if (!user) {
                 console.log("no user ");
 
-                return res.redirect('http://localhost:3000/recent-transactions');
+                return res.redirect('https://clubnights.fun/recent-transactions');
             }
 
             // Add the amount to totalPayments
@@ -268,9 +268,9 @@ const checkStatus = async (req, res) => {
             console.log("done pay");
 
 
-            return res.redirect(`http://localhost:3000/confirmed-list/${filteredSongReqList[0].djId}`);
+            return res.redirect(`https://clubnights.fun/confirmed-list/${filteredSongReqList[0].djId}`);
         } else {
-            return res.redirect(`http://localhost:3000/failed`);
+            return res.redirect(`https://clubnights.fun/failed`);
         }
     } catch (error) {
         console.error(error);
@@ -311,7 +311,7 @@ const checkStatus = async (req, res) => {
             
 //             if (existingPayment) {
 //                 console.log("Exist pay");
-//                 return res.redirect('http://localhost:3000/recent-transactions');
+//                 return res.redirect('https://clubnights.fun/recent-transactions');
 //             }
 
 //             // Update payment status and sort by date descending
@@ -346,7 +346,7 @@ const checkStatus = async (req, res) => {
 //                 if (existingSong) {
 //                     // If the same song link with the same mobile number already exists, redirect
 //                     console.log(existingSong, "ext");
-//                     return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+//                     return res.redirect(`https://clubnights.fun/confirmed-list/${updatedPayment.djId}`);
 //                 } else {
 //                     // Push accepted song to AcceptedSongs array
 //                     lastDJ.AcceptedSongs.push({
@@ -368,7 +368,7 @@ const checkStatus = async (req, res) => {
 
 //             if (!user) {
 //                 console.log("no user ");
-//                 return res.redirect('http://localhost:3000/recent-transactions');
+//                 return res.redirect('https://clubnights.fun/recent-transactions');
 //             }
 
 //             // Add the amount to totalPayments
@@ -378,9 +378,9 @@ const checkStatus = async (req, res) => {
 //             await user.save();
 //             console.log("done pay");
 
-//             return res.redirect(`http://localhost:3000/confirmed-list/${updatedPayment.djId}`);
+//             return res.redirect(`https://clubnights.fun/confirmed-list/${updatedPayment.djId}`);
 //         } else {
-//             return res.redirect(`http://localhost:3000/failed`);
+//             return res.redirect(`https://clubnights.fun/failed`);
 //         }
 //     } catch (error) {
 //         console.error(error);
