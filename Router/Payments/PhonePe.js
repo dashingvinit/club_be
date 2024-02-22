@@ -4,7 +4,7 @@ const dotenv = require('dotenv');
 const paymentModal = require('../../schema/PaymentSchema');
 const DJPortalModal = require('../../schema/DJPortalSchema');
 const userModal = require('../../schema/UserSchema');
-const { v4: uuidv4 } = require('uuid'); // Importing uuidv4 for generating unique identifiers
+const { v4: uuidv4 } = require('uuid'); //Importing uuidv4 for generating unique identifiers
 const paymentWaitingModal = require('../../schema/PaymentWaitingSchema');
 
 // Load environment variables from .env file
@@ -20,7 +20,7 @@ const merchant_id = process.env.MERCHANT_ID;
             merchantUserId: req.body.MUID,
             name: req.body.name,
             amount: req.body.amount * 100,
-            redirectUrl: `https://clubnights.netlify.app/pay/status/${merchantTransactionId}`,
+            redirectUrl: `https://api.clubnights.fun/pay/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             mobileNumber: req.body.number,
             paymentInstrument: {
