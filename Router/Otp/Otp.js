@@ -7,8 +7,8 @@ const  otpModal = require('../../schema/OTPSchema')
 //send otp by mobile 
 const twilio = require('twilio');
 
-const accountSid = 'AC1744ecd4fb2549b1f5940a564fecc97c';
-const authToken = '93fcbb561504455adde23fc346507fd6';
+const accountSid = 'AC13b9ae29adf907af144647cd01002ee2';
+const authToken = '35175b59658900cc1f25c5cffe61f73d';
 const twilioClient = twilio(accountSid, authToken);
 
 // Generate a random 4-digit OTP
@@ -18,7 +18,6 @@ function generateOTP() {
 
 router.post('/send-otp-mobile', async (req, res) => {
   const { to } = req.body;
-
   if (!to) {
     return res.status(400).json({ error: 'Missing "to" field in the request body' });
   }
@@ -40,7 +39,7 @@ router.post('/send-otp-mobile', async (req, res) => {
     // Send OTP
     await twilioClient.messages.create({
       body: message,
-      messagingServiceSid: 'MG734f651e157e3ceb348bb20415586d85',
+      messagingServiceSid: 'MGc57451b1eee410a2a2ecd808321cf70b',
       to: to
     });
 
@@ -81,7 +80,7 @@ router.post('/send-payment-mobile', async (req, res) => {
     // Send OTP
     await twilioClient.messages.create({
       body: message,
-      messagingServiceSid: 'MG734f651e157e3ceb348bb20415586d85',
+      messagingServiceSid: 'MGc57451b1eee410a2a2ecd808321cf70b',
       to:"+91"+ to
     });
 

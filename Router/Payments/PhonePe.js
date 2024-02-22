@@ -20,7 +20,7 @@ const merchant_id = process.env.MERCHANT_ID;
             merchantUserId: req.body.MUID,
             name: req.body.name,
             amount: req.body.amount * 100,
-            redirectUrl: `https://club-be.vercel.app/pay/status/${merchantTransactionId}`,
+            redirectUrl: `https://clubnights.netlify.app/pay/status/${merchantTransactionId}`,
             redirectMode: 'POST',
             mobileNumber: req.body.number,
             paymentInstrument: {

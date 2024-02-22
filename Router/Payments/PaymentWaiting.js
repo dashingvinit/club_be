@@ -6,9 +6,8 @@ const  axios = require('axios');
 const router = express.Router();
  
 const twilio = require('twilio');
-
-const accountSid = 'AC1744ecd4fb2549b1f5940a564fecc97c';
-const authToken = '93fcbb561504455adde23fc346507fd6';
+const accountSid = 'AC13b9ae29adf907af144647cd01002ee2';
+const authToken = '35175b59658900cc1f25c5cffe61f73d';
 const twilioClient = twilio(accountSid, authToken);
 
 
@@ -36,7 +35,7 @@ async function processPaymentWaitingEntry(SongReqList, djID, paymentWaitingStart
       const MUID = "MUID" + userMobile;
       const TUID = djID + "TUID" + userMobile;
 
-      const additionalDataPromise = axios.post('http://localhost:5000/pay/payment', {
+      const additionalDataPromise = axios.post('https://api.clubnights.fun/pay/payment', {
         MUID: MUID,
         transactionId: TUID,
         name: "User" + userMobile,
@@ -62,7 +61,7 @@ async function processPaymentWaitingEntry(SongReqList, djID, paymentWaitingStart
         // Send msg
         await twilioClient.messages.create({
           body: message,
-          messagingServiceSid: 'MG734f651e157e3ceb348bb20415586d85',
+          messagingServiceSid: 'MGc57451b1eee410a2a2ecd808321cf70b',
           to:"+91"+ userMobile
         });
     
