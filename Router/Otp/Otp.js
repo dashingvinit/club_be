@@ -11,7 +11,7 @@ const accountSid = 'AC13b9ae29adf907af144647cd01002ee2';
 const authToken = '35175b59658900cc1f25c5cffe61f73d';
 const twilioClient = twilio(accountSid, authToken);
 
-// Generate a random 4-digit OTP
+// Generate a random 4-digit OTP new changes
 function generateOTP() {
   return Math.floor(1000 + Math.random() * 9000);
 }
