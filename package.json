@@ -21,6 +21,7 @@
     "node-schedule": "^2.1.1",
     "socket.io": "^4.7.2",
     "twilio": "^4.21.0",
+    "unirest": "^0.6.0",
     "uuid": "^9.0.1"
   }
 }

@@ -201,7 +201,7 @@ const checkStatus = async (req, res) => {
             if (filterExist[0].paymentWaitingstatus === true) {
                 // console.log(filterExist);
                 console.log("Exist pay");
-                return res.redirect('https://clubnights.netlify.app/recent-transactions');
+                return res.redirect('https://clubnights.fun/recent-transactions');
             }
          // Update payment status and sort by date descending
        const updatedPayment = await paymentWaitingModal.findOneAndUpdate(
@@ -236,7 +236,7 @@ const checkStatus = async (req, res) => {
          if (existingSong) {
            // If the same song link with the same mobile number already exists, do not save to the database
            console.log(existingSong,"ext");
-           return res.redirect(`https://clubnights.netlify.app/confirmed-list/${filteredSongReqList[0].djId}`);
+           return res.redirect(`https://clubnights.fun/confirmed-list/${filteredSongReqList[0].djId}`);
         }
  
                  // Push accepted song to AcceptedSongs array
@@ -248,6 +248,7 @@ const checkStatus = async (req, res) => {
                 bookingPrice: filteredSongReqList[0].bookingPrice,
                 userMobile: filteredSongReqList[0].userMobile,
                });
+
             // Save the updated DJ document
             await lastDJ.save();
 
@@ -257,7 +258,7 @@ const checkStatus = async (req, res) => {
             if (!user) {
                 console.log("no user ");
 
-                return res.redirect('https://clubnights.netlify.app/recent-transactions');
+                return res.redirect('https://clubnights.fun/recent-transactions');
             }
 
             // Add the amount to totalPayments
@@ -268,9 +269,9 @@ const checkStatus = async (req, res) => {
             console.log("done pay");
 
 
-            return res.redirect(`https://clubnights.netlify.app/confirmed-list/${filteredSongReqList[0].djId}`);
+            return res.redirect(`https://clubnights.fun/confirmed-list/${filteredSongReqList[0].djId}`);
         } else {
-            return res.redirect(`https://clubnights.netlify.app/failed`);
+            return res.redirect(`https://clubnights.fun/failed`);
         }
     } catch (error) {
         console.error(error);

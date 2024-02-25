@@ -5,6 +5,8 @@ const {Server} = require('socket.io'); // Import the socket.io library
 const http = require('http');
 const PORT = process.env.PORT || 5000;
 require('./db/db'); 
+require('dotenv').config()
+
 const clubRouter = require('./Router/Club/club'); // Assuming these are Express routers
 const adminRouter = require('./Router/Admin/Admin');
 const djRouter = require('./Router/DJ/DJ');
