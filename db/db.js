@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
-const db = "mongodb+srv://club-nights:club-nights-1234@club-nights.dhyzm6b.mongodb.net/?retryWrites=true&w=majority";
+require('dotenv').config()
+
+const db = process.env.DB || "";
 
 mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {

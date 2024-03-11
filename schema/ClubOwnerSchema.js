@@ -31,7 +31,7 @@ const clubSchema = new mongoose.Schema({
   },
   clubUPIID :{
     type: String,
-    required: true
+    // required: true
   },
     password:{
       type: String,

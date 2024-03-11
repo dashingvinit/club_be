@@ -78,6 +78,78 @@ router.delete('/delclubs/:id', async (req, res) => {
   }
 });
 
+// Verify or Unverify a Club by ID
+// Verify or Unverify a Club by ID
+router.put('/verify/:id', async (req, res) => {
+  const { id } = req.params;
+  const { isVerified } = req.body;
+
+  try {
+    // Find the club by ID
+    let club = await ClubModal.findById(id);
+
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found' });
+    }
+
+    // Check if clubId is not present in the request body
+    if (club.clubId === undefined) {
+      // Create a new clubId if clubId is not provided
+      club.clubId = Date.now().toString().slice(0, 5) + club.clubMobile.toString().slice(5, 10);
+    }
+
+    // Update the verification status and optionally update other fields if needed
+    club.set({
+      isVerified
+      // Add other fields here if needed
+    });
+
+    await club.save();
+
+    res.status(200).json(club);
+  } catch (error) {
+    console.error('Error verifying/unverifying club:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Update Club Verification status by Club ID
+router.put('/updateVerification/:clubId', async (req, res) => {
+  try {
+    // Assuming that the clubId is passed as a parameter in the route
+    const clubId = req.params.clubId;
+
+    // Find the club by clubId
+    const club = await clubModal.findById(clubId);
+
+    if (!club) {
+      return res.status(404).json({ message: 'Club not found' });
+    }
+
+    // Check if the generated clubId already exists
+    let newClubId;
+    do {
+      newClubId = Math.floor(10000000 + Math.random() * 90000000);
+    } while (await clubModal.exists({ clubId: newClubId }));
+
+    // Update the verification status
+    club.isVerified = true;
+
+    // Assign the new unique clubId
+    club.clubId = newClubId;
+
+    // Save the updated club information
+    await club.save();
+
+    res.status(200).json({ message: 'Club verification updated successfully', club });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
 
 // Route to check if a club is verified by its ID
 router.get('/check-verification/:clubEmail', async (req, res) => {

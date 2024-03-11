@@ -2,7 +2,7 @@ const express = require('express');
 const AdminModal = require('../../schema/AdminSchema');
 const clubModal = require('../../schema/ClubOwnerSchema');
 const router = express.Router();
-
+const jwt = require('jsonwebtoken')
 // Endpoint to handle the creation of a new admin
 router.post('/admins', async (req, res) => {
   try {
@@ -25,7 +25,35 @@ router.post('/admins', async (req, res) => {
   }
 });
 
+// Login route
+router.post('/login', async (req, res) => {
+  const { username, password } = req.body;
 
+  try {
+    // Check if the user exists
+    const user = await AdminModal.findOne({ username });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // Check password
+    const pass = await AdminModal.findOne({username});
+    
+
+    if (pass.password !== password) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+
+    // If credentials are valid, create and send a token
+    const token = jwt.sign({ userId: user._id }, 'yourSecretKey', { expiresIn: '1h' }); // Replace 'yourSecretKey' with a secret key for JWT
+
+    res.json({ token });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
 
 router.post('/updateVerification/:clubId', async (req, res) => {
   try {

@@ -7,8 +7,7 @@ SongReqList:[{
  
   songname: {
     type: String,
-    //required: true,
-
+    required: true,
   },
   songlink: {
     type: String,
@@ -39,11 +38,6 @@ SongReqList:[{
     songname: {
       type: String,
       required: true,
-  
-    },
-    announcement:{
-      type: String,
-  
     },
     songlink: {
       type: String,
@@ -60,17 +54,14 @@ SongReqList:[{
     
     userMobile:{
       type: String,
-      required: true
-  
-    },
-  
+
+    }
   }],
 
   DJPortalStartTimeing: {
     type: String,
     required: true,
   },
-
   TotalSongs :{
     type: Number,
     required: true,
@@ -88,7 +79,10 @@ SongReqList:[{
     default: Date.now,
   },
 
+
+  
 });
+
 
 const DJPortalModal = mongoose.model('DJPortalModal', DJPortalSchema);
 module.exports = DJPortalModal;
