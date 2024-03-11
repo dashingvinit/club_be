@@ -4,48 +4,73 @@ const DJPortalSchema = new mongoose.Schema({
 DJId: [{ type: Schema.Types.ObjectId, ref: 'DJModal' }],
 
 SongReqList:[{
+ 
   songname: {
     type: String,
-    required: true,
+    //required: true,
+
   },
   songlink: {
     type: String,
   },
-  bookingPrice: {
-    type: Number,
-  },
-  userName: {
-    type: String,
-  },
-  userMobile:{
+  optionalurl:{
     type: String,
 
   },
+  announcement:{
+    type: String,
+
+  },
+  bookingPrice: {
+    type: Number,
+    required: true
+
+  },
+  
+  userMobile:{
+    type: String,
+    required: true
+
+  },
+
  
 }],
   AcceptedSongs: [{
     songname: {
       type: String,
       required: true,
+  
+    },
+    announcement:{
+      type: String,
+  
     },
     songlink: {
       type: String,
     },
+    optionalurl:{
+      type: String,
+  
+    },
     bookingPrice: {
       type: Number,
+      required: true
+  
     },
-    userName: {
-      type: String,
-    },
+    
     userMobile:{
       type: String,
-
-    }
+      required: true
+  
+    },
+  
   }],
+
   DJPortalStartTimeing: {
     type: String,
     required: true,
   },
+
   TotalSongs :{
     type: Number,
     required: true,
@@ -63,10 +88,7 @@ SongReqList:[{
     default: Date.now,
   },
 
-
-  
 });
-
 
 const DJPortalModal = mongoose.model('DJPortalModal', DJPortalSchema);
 module.exports = DJPortalModal;

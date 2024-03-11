@@ -9,10 +9,19 @@ const clubRouter = require('./Router/Club/club'); // Assuming these are Express 
 const adminRouter = require('./Router/Admin/Admin');
 const djRouter = require('./Router/DJ/DJ');
 const djPortal = require('./Router/DJ/DJPortal') 
-const otpRouter = require('./Router/Otp/Otp')
+const otpRouter = require('./Router/Otp/Otp');
+const paymentRouter = require('./Router/Payments/PaymentRouter')
 let app = express();
 app.use(express.json());
 app.use(cors());
+// Enable CORS for all routes
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//   next();
+// });
+
 app.use(
   bodyParser.urlencoded({
     extended: false
@@ -26,6 +35,7 @@ app.use('/otpservices', adminRouter);
 app.use('/dj',djRouter);
 app.use('/djportal',djPortal);
 app.use('/otp',otpRouter);
+app.use('/pay',paymentRouter);
 
 const server = http.createServer(app);
 

@@ -5,8 +5,8 @@ const twilio = require('twilio');
 const otpModal = require('../../schema/OTPSchema');
 //send otp by mobile 
 
-const accountSid = 'ACf4655a7566fb2d15552677c2c20e749b';
-const authToken = '90a77b7c902fd4be193cfc54c50142a6';
+const accountSid = 'AC12c82e4af2eb39a3c22d953b6032d380';
+const authToken = '2021d041b1244ef4ac29925cfb0f293c';
 const twilioClient = twilio(accountSid, authToken);
 
 // Generate a random 4-digit OTP
@@ -28,7 +28,7 @@ router.post('/send-otp-mobile', (req, res) => {
   twilioClient.messages
     .create({
       body: message,
-      messagingServiceSid: 'MGec7786a24c26500bb84549853d7a3b3e',
+      messagingServiceSid: 'MG953adae4ac4e914856de5ae5afd6ffa3',
       to: to
     })
     .then(async(message) => {
