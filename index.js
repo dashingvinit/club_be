@@ -13,11 +13,6 @@ const djRouter = require('./Router/DJ/DJ');
 const djPortal = require('./Router/DJ/DJPortal') 
 const otpRouter = require('./Router/Otp/Otp');
 const paymentRouter = require('./Router/Payments/PaymentRouter')
-<<<<<<< HEAD
-let app = express();
-app.use(express.json());
-app.use(cors());
-=======
 const userRouter = require('./Router/User/User')
 const waitPayRouter = require('./Router/Payments/PaymentWaiting')
 const clubPay = require('./Router/Payments/ClubPay')
@@ -32,7 +27,6 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
 // Enable CORS for all routes
 // app.use((req, res, next) => {
 //   res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
@@ -55,12 +49,9 @@ app.use('/dj',djRouter);
 app.use('/djportal',djPortal);
 app.use('/otp',otpRouter);
 app.use('/pay',paymentRouter);
-<<<<<<< HEAD
-=======
 app.use('/user',userRouter);
 app.use('/user',userRouter);
 app.use('/waitpay',waitPayRouter);
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
 
 //our db payment routers 
 app.use('/clubpay',clubPay);

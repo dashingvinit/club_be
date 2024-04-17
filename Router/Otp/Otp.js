@@ -5,16 +5,10 @@ const router = express.Router();
 const userModal = require('../../schema/UserSchema');
 const  otpModal = require('../../schema/OTPSchema')
 //send otp by mobile 
-<<<<<<< HEAD
-
-const accountSid = 'AC12c82e4af2eb39a3c22d953b6032d380';
-const authToken = '2021d041b1244ef4ac29925cfb0f293c';
-=======
 const twilio = require('twilio');
 const unirest = require('unirest');
 const accountSid = 'AC13b9ae29adf907af144647cd01002ee2';
 const authToken = '35175b59658900cc1f25c5cffe61f73d';
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
 const twilioClient = twilio(accountSid, authToken);
 
 // Generate a random 4-digit OTP new changes
@@ -138,24 +132,8 @@ router.post('/send-payment-mobile', async (req, res) => {
     // Send OTP
     await twilioClient.messages.create({
       body: message,
-<<<<<<< HEAD
-      messagingServiceSid: 'MG953adae4ac4e914856de5ae5afd6ffa3',
-      to: to
-    })
-    .then(async(message) => {
-      console.log(`OTP sent to ${to}: ${message.sid}`);
-      const saveOtpStatus = new otpModal({otp:otp,otpMobile:to});
-        await saveOtpStatus.save();
-          
-      res.json({ message: 'OTP sent successfully',success:true });
-    })
-    .catch(error => {
-      console.error(`Error sending OTP to ${to}: ${error.message}`);
-      res.status(500).json({ error: 'Failed to send OTP' ,success:false});
-=======
       messagingServiceSid: 'MGc57451b1eee410a2a2ecd808321cf70b',
       to:"+91"+ to
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
     });
 
     res.json({ message: 'pay link sent successfully', success: true });

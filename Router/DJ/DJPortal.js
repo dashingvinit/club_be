@@ -1,10 +1,7 @@
 const express = require('express');
 const DJPortalModal = require('../../schema/DJPortalSchema');
-const axios  = require('axios');
-<<<<<<< HEAD
-=======
+const axios = require('axios');
 const DJModal = require('../../schema/DJSchema');
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
 const router = express.Router();
 // POST endpoint to create a new DJ portal entry
 // router.post('/start', async (req, res) => {
@@ -16,12 +13,12 @@ const router = express.Router();
 //       price,
 //       DJPortalEndTiming,
 //     } = req.body;
-  
+
 //     await axios.put(`http://localhost:5000/dj/updateStatus/${DJId}`,{statusLive:true})
 //     .then(async(resp)=>{
-     
+
 //       if(resp){
-          
+
 // // Create a new DJPortalModal instance
 // const newDJPortal =await new DJPortalModal({
 //   DJId,
@@ -52,83 +49,68 @@ const router = express.Router();
 //     console.error(error);
 //     res.status(500).json({ message: 'Internal Server Error' });
 //     }
-    
-    
+
 // });
 // POST endpoint to create a new DJ portal entry
 router.post('/start', async (req, res) => {
   try {
-    const {
-      DJId,
-      DJPortalStartTimeing,
-      TotalSongs,
-      price,
-      DJPortalEndTiming,
-    } = req.body;
-  
-    await axios.put(`http://localhost:5000/dj/updateStatus/${DJId}`,{statusLive:true})
-    .then(async(resp)=>{
-     
-      if(resp){
-          
-// Create a new DJPortalModal instance
-const newDJPortal = new DJPortalModal({
-  DJId,
-  DJPortalStartTimeing,
-  TotalSongs,
-  price,
-  DJPortalEndTiming,
-});
+    const { DJId, DJPortalStartTimeing, TotalSongs, price, DJPortalEndTiming } =
+      req.body;
 
-<<<<<<< HEAD
-// Save the new DJ portal entry to the database
-const savedDJPortal = await newDJPortal.save();
-=======
+    await axios
+      .put(`http://localhost:5000/dj/updateStatus/${DJId}`, {
+        statusLive: true,
+      })
+      .then(async (resp) => {
+        if (resp) {
+          // Create a new DJPortalModal instance
+          const newDJPortal = new DJPortalModal({
+            DJId,
+            DJPortalStartTimeing,
+            TotalSongs,
+            price,
+            DJPortalEndTiming,
+          });
 
-  
-    const dj = await DJModal.findByIdAndUpdate(DJId, { $set: { statusLive: true } }, { new: true });
+          const dj = await DJModal.findByIdAndUpdate(
+            DJId,
+            { $set: { statusLive: true } },
+            { new: true }
+          );
 
-    if (!dj) {
-      console.log(  DJId,
-        DJPortalStartTimeing,
-        TotalSongs,
-        price,
-        DJPortalEndTiming);
-      return res.status(404).json({ msg: 'DJ not found' });
-    }
+          if (!dj) {
+            console.log(
+              DJId,
+              DJPortalStartTimeing,
+              TotalSongs,
+              price,
+              DJPortalEndTiming
+            );
+            return res.status(404).json({ msg: 'DJ not found' });
+          }
 
-    // Create a new DJPortalModal instance
-    const newDJPortal =  new DJPortalModal({
-      DJId,
-      DJPortalStartTimeing,
-      TotalSongs,
-      price,
-      DJPortalEndTiming,
-    });
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
+          // Create a new DJPortalModal instance
+          // const newDJPortal =  new DJPortalModal({
+          //   DJId,
+          //   DJPortalStartTimeing,
+          //   TotalSongs,
+          //   price,
+          //   DJPortalEndTiming,
+          // });
 
-res.status(201).json(savedDJPortal);
-
-      }
-      else{
-        res.status(500).json({ message: 'Status not live Server Error' });
-
-      }
-})
-.catch((err)=>{
-  res.status(500).json({ message: 'Internal Server Error' });
-
-})
-
-  }
-   catch (error) {
+          res.status(201).json(savedDJPortal);
+        } else {
+          res.status(500).json({ message: 'Status not live Server Error' });
+        }
+      })
+      .catch((err) => {
+        res.status(500).json({ message: 'Internal Server Error' });
+      });
+  } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
-    }
-    
-    
+  }
 });
-
 
 // Route to get all DJPortalModals
 router.get('/getall', async (req, res) => {
@@ -153,7 +135,6 @@ router.get('/getone/:id', async (req, res) => {
   }
 });
 
-
 // Route to save AcceptedSongs
 router.post('/saveAcceptedSongs/:djId', async (req, res) => {
   const { djId } = req.params;
@@ -161,19 +142,23 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 
   try {
     // Find the DJPortalModal using the provided DJId
-    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });;
-    
+    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({
+      date: -1,
+    });
+
     if (!djPortal) {
       return res.status(404).json({ error: 'DJ Portal not found' });
     }
 
     // Add the acceptedSongs to the AcceptedSongs array
     djPortal.AcceptedSongs.push(...acceptedSongs);
-   
+
     // Save the updated DJPortalModal
     await djPortal.save();
 
-    return res.status(200).json({ message: 'AcceptedSongs saved successfully' });
+    return res
+      .status(200)
+      .json({ message: 'AcceptedSongs saved successfully' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -181,11 +166,8 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 });
 
 //  **********************************************************************************
-// Testing 
+// Testing
 
-<<<<<<< HEAD
-// Route to save AcceptedSongs
-=======
 // router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 //   const { djId } = req.params;
 //   const { acceptedSongs } = req.body;
@@ -193,7 +175,7 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 //   try {
 //     // Find the DJPortalModal using the provided DJId
 //     const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
-    
+
 //     if (!djPortal) {
 //       return res.status(404).json({ error: 'DJ Portal not found' });
 //     }
@@ -203,7 +185,6 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 //       // Generate unique identifiers
 //       const MUID = `MUID$${song.userMobile}-${Date.now()}`;
 //       const transactionId = `TUID$${song.userMobile}-${Date.now()}`;
-      
 
 //       // Make axios request to create payment
 //       const response = await axios.post('http://localhost:5000/clubpay/createPayment', {
@@ -234,15 +215,15 @@ router.post('/saveAcceptedSongs/:djId', async (req, res) => {
 //   }
 // });
 
-
-
 // GET route to fetch the latest accepted songs by DJ ID
 router.get('/final-accepted-songs/:djId', async (req, res) => {
   try {
     const djId = req.params.djId;
 
     // Fetch the latest DJ portal by DJ ID
-    const latestPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
+    const latestPortal = await DJPortalModal.findOne({ DJId: djId }).sort({
+      date: -1,
+    });
 
     if (!latestPortal) {
       return res.status(404).json({ message: 'DJ portal not found' });
@@ -256,42 +237,25 @@ router.get('/final-accepted-songs/:djId', async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //  **********************************************************************************
 // API endpoint to find the last saved collection by DJId and return AcceptedSongs by userMobile
 router.get('/accepted-songs/:DJId/:userMobile', async (req, res) => {
   try {
     const { DJId, userMobile } = req.params;
-    
+
     // Find the last saved collection by DJId
     const djPortal = await DJPortalModal.findOne({ DJId }).sort({ date: -1 });
 
     if (!djPortal) {
-      return res.status(404).json({ message: 'No DJ Portal found for the provided DJId' });
+      return res
+        .status(404)
+        .json({ message: 'No DJ Portal found for the provided DJId' });
     }
 
     // Filter AcceptedSongs by userMobile
-    const acceptedSongs = djPortal.AcceptedSongs.filter(song => song.userMobile === userMobile);
+    const acceptedSongs = djPortal.AcceptedSongs.filter(
+      (song) => song.userMobile === userMobile
+    );
 
     res.json(acceptedSongs);
   } catch (err) {
@@ -300,32 +264,35 @@ router.get('/accepted-songs/:DJId/:userMobile', async (req, res) => {
   }
 });
 // Route to save SongReqList
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
 router.post('/saveselectedsongs/:djId', async (req, res) => {
   const { djId } = req.params;
   const { SongReqList } = req.body;
 
-  console.log("Song req ", SongReqList);
-  console.log("dj id", djId)
+  console.log('Song req ', SongReqList);
+  console.log('dj id', djId);
   try {
     // Find the DJPortalModal using the provided DJId
-    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
-    
+    const djPortal = await DJPortalModal.findOne({ DJId: djId }).sort({
+      date: -1,
+    });
+
     if (!djPortal) {
       return res.status(404).json({ error: 'DJ Portal not found' });
     }
 
     // Add the SongReqList to the SongReqList array
     djPortal.SongReqList.push(...SongReqList);
-  //  console.log("Req list", djPortal.SongReqList);
+    //  console.log("Req list", djPortal.SongReqList);
 
     // Update booking prices if necessary
     djPortal.updateBookingPrice();
-    
+
     // Save the updated DJPortalModal
     await djPortal.save();
 
-    return res.status(200).json({ message: 'Selected Songs saved successfully' });
+    return res
+      .status(200)
+      .json({ message: 'Selected Songs saved successfully' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
@@ -338,21 +305,24 @@ router.get('/latestSongReqList/:djId', async (req, res) => {
     const { djId } = req.params;
 
     // Find the DJPortalModal document with the specified DJId and sort by date in descending order to get the latest entry
-    const latestDJPortal =await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
+    const latestDJPortal = await DJPortalModal.findOne({ DJId: djId }).sort({
+      date: -1,
+    });
 
     if (!latestDJPortal) {
-      return res.status(404).json({ message: 'No DJ Portal found for the specified DJId' });
+      return res
+        .status(404)
+        .json({ message: 'No DJ Portal found for the specified DJId' });
     }
 
     // Extract the latest SongReqList
     const latestSongReqList = latestDJPortal.SongReqList;
-     const date = latestDJPortal.DJPortalEndTiming;
-    res.json({ songs :latestSongReqList, timer : date });
+    const date = latestDJPortal.DJPortalEndTiming;
+    res.json({ songs: latestSongReqList, timer: date });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 
 // Define the route to get the latest SongReqList by DJId
 router.get('/getlatestportal/:djId', async (req, res) => {
@@ -360,15 +330,19 @@ router.get('/getlatestportal/:djId', async (req, res) => {
     const { djId } = req.params;
 
     // Find the DJPortalModal document with the specified DJId and sort by date in descending order to get the latest entry
-    const latestDJPortal =await DJPortalModal.findOne({ DJId: djId }).sort({ date: -1 });
+    const latestDJPortal = await DJPortalModal.findOne({ DJId: djId }).sort({
+      date: -1,
+    });
 
     if (!latestDJPortal) {
-      return res.status(404).json({ message: 'No DJ Portal found for the specified DJId' });
+      return res
+        .status(404)
+        .json({ message: 'No DJ Portal found for the specified DJId' });
     }
 
     // Extract the latest SongReqList
     const latestPortal = latestDJPortal;
-    res.json({latestPortal });
+    res.json({ latestPortal });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

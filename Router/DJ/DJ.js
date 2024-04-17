@@ -116,10 +116,6 @@ router.put('/updateStatus/:id', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-
-module.exports = router;
-=======
 router.get('/checkDJModalStatus/:clubId', async (req, res) => {
   try {
     const clubId = req.params.clubId;
@@ -134,4 +130,3 @@ router.get('/checkDJModalStatus/:clubId', async (req, res) => {
   }
 });
 module.exports = router;
->>>>>>> 6d2cebb4298c57ae83221f0f748cc3966f4ff89c
